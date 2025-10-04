@@ -1,0 +1,14 @@
+# requirements.txt
+streamlit
+pandas
+numpy
+matplotlib
+opencv-python-headless
+pytesseract
+easyocr
+pdf2image
+python-magic
+openpyxl
+xlrd
+sqlalchemy
+python-dateutil
