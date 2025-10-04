@@ -1,4 +1,3 @@
---- streamlit_app.py ---
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -149,7 +148,7 @@ def parse_table_from_text_lines(lines):
         hh = h.replace('.', '').strip()
         if 'NAMA' in hh:
             mapping[i] = 'NAMA BARANG'
-        elif 'JUMLAH' in hh or 'QTY' in hh or 'Q'TY' in hh:
+        elif 'JUMLAH' in hh or 'QTY' in hh or 'QTY' in hh:
             mapping[i] = 'JUMLAH'
         elif 'KETERANGAN' in hh or 'KET' in hh:
             mapping[i] = 'KETERANGAN'
@@ -433,3 +432,46 @@ def to_excel(df: pd.DataFrame) -> bytes:
         writer.save()
     processed_data = output.getvalue()
     return processed_data
+
+from supabase_example import upload_to_supabase
+
+if st.button("Upload ke Supabase"):
+    if not df.empty:
+        with st.spinner("Mengunggah data ke Supabase..."):
+            try:
+                response = upload_to_supabase(df)
+                st.success("✅ Data berhasil dikirim ke Supabase!")
+            except Exception as e:
+                st.error(f"❌ Gagal mengunggah: {e}")
+    else:
+        st.warning("Tidak ada data untuk diunggah.")
+
+from ai_suggestion import generate_ai_recommendations
+
+st.markdown("### 🤖 Rekomendasi Otomatis (AI Suggestion)")
+if st.button("Lihat Rekomendasi AI"):
+    if not df.empty:
+        with st.spinner("Menganalisis data mutasi barang..."):
+            recs = generate_ai_recommendations(df)
+            for rec in recs:
+                st.info(rec)
+    else:
+        st.warning("Tidak ada data untuk dianalisis.")
+
+from ai_visualization import plot_monthly_trend, plot_item_distribution, plot_trend_by_item
+
+st.markdown("## 📊 Visualisasi Tren Barang")
+
+if not df.empty:
+    with st.expander("🔹 Tren Total Barang Keluar per Bulan"):
+        plot_monthly_trend(df)
+
+    with st.expander("🔹 Distribusi Barang Keluar Berdasarkan Jenis Barang"):
+        plot_item_distribution(df)
+
+    with st.expander("🔹 Tren Barang Spesifik"):
+        item_names = df["uraian_barang"].unique().tolist()
+        selected_item = st.selectbox("Pilih barang untuk melihat trennya:", item_names)
+        plot_trend_by_item(df, selected_item)
+else:
+    st.info("Silakan unggah data terlebih dahulu untuk menampilkan grafik.")

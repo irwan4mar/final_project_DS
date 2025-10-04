@@ -7,8 +7,12 @@ opencv-python-headless
 pytesseract
 easyocr
 pdf2image
+Pillow
+sqlalchemy
 python-magic
 openpyxl
 xlrd
-sqlalchemy
 python-dateutil
+supabase
+python-dotenv
+pandas
